@@ -1,0 +1,17 @@
+<form action="/create" method="POST">
+    <h2>Create group</h2>
+    <div class='input-field'>
+        <input type='text' name='mail'>
+    </div>
+    {{#if addedMails.length}}
+    <ul>
+        {{#each addedMails}}
+        <li class='todo'>
+        <label>{{this}}</label>
+        </li>
+        {{/each}}
+    </ul>
+    {{/if}}
+    <button type='button' action='/addInGroup' class='btn'>Add</button>
+    <button type='submit' class='btn'>Create</button>
+</form>

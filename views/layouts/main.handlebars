@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href='/index.css'>
+    <title>{{title}}</title>
+</head>
+<nav class="blue darken-4">
+    <!--{{#if (enter)}}-->
+    <!-- Кнопки вход и регистрация -->
+
+
+    <!--{{else}}
+    <div>
+        <a>Добро пожаловать {{enter}}</a>
+        <a href="/out">Выйти</a>
+    </div>
+
+    {{/if}}-->
+    <div class="nav-wrapper">
+        <ul id="nav-mobile" class="left hide-on-med-and-down">
+            {{#if Username}}
+            <li><a>Добро пожаловать {{Username}}</a></li>
+            <li><a href="/">Домой</a></li>
+            <li><a href="/out">Выход</a></li>
+            {{else}}
+            <li><a href="/EnterInAccount">Вход</a></li>
+            <li><a href="/registration">Регистрация</a></li>
+            {{/if}}
+            
+            
+            <!-- {{#if isIndex}}
+            <li class="active"><a href="/">todos</a></li>
+            {{else}}
+            <li><a href="/">todos</a></li>
+            {{/if}}
+            
+            {{#if isCreate}}
+            <li class="active"><a href="/create">create</a></li>
+            {{else}}
+            <li><a href="/create">create</a></li>
+            {{/if}}
+            -->
+
+
+
+        </ul>
+    </div>
+</nav>
+
+<body>
+    <div class="container">
+        {{{ body }}}
+    </div>
+</body>
+
+</html>
