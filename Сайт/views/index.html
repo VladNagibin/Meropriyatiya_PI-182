@@ -1,27 +1,22 @@
-
 <h2>Main page</h2>
-{{#if GrUsers.users.length}}
+{{#if OurGroup.length}}
 <ul>
-    {{#each GrUsers.users}}
+    {{#each OurGroup}}
     <li class='todo'>
-        <form action="/complete" , method="POST">
-            <label>
-                {{#if completed}}
-                <input type='checkbox' checked name='completed'>
-                <span class='completed'>{{title}}</span>
-                {{else}}
-                <input type='checkbox' name='completed'>
-                <span>{{title}}</span>
 
-                {{/if}}
-                <input type="hidden" value="{{_id}}" name='id'>
-                <button class="btn btn small" , type="submit">Save</button>
+        <label>
+            <a>{{name}}</a>
+        </label>
 
-            </label>
-        </form>
     </li>
     {{/each}}
 </ul>
-{{else}}
-<p><li><a href="/createGroup">Создать группу</a></li></p>
+
 {{/if}}
+
+<p>
+    <li><a href="/createGroup">Создать группу</a></li>
+</p>
+<p>
+    <li><a href="/redGroup">Изменить группу</a></li>
+</p>

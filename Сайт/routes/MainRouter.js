@@ -8,29 +8,30 @@ const enter = require('../modules/enter')
 const enterMiddle = require('../middleware/enter')
 
 
-router.get('/',enterMiddle, async (req, res) => {
-    const {cookies } = req
-    GrUsers= GroupOfUsers.findOne({
-        'users':{'mail': cookies.UserMail }
-    })
-    if ('UserName' in cookies){
-        res.render('index',{
-            title:"main page",
+router.get('/', enterMiddle, async (req, res) => {
+    const { cookies } = req
+    GrUsers = await GroupOfUsers.findOne({ "users.mail": cookies.UserMail.toString() }).lean()
+    if ('UserName' in cookies) {
+        res.render('index', {
+            title: "main page",
             Username: cookies.UserName,
+            OurGroup: GrUsers.users
+        })
+    }
+    else {
+        res.render('index', {
+            title: "main page",
+            Username: 'Not found',
             GrUsers
         })
     }
-    else{
-        res.render('index',{
-            title:"main page",
-            Username:'Not found'
-        })
-    }
-    
+
+
+
 })
 router.get('/EnterInAccount', ((req, res) => {
-    res.render('Enter',{
-        title:"Enter page",
+    res.render('Enter', {
+        title: "Enter page",
     })
 }))
 
@@ -57,14 +58,14 @@ router.post('/enter', enter.logIn)/*( async(req, res) => {
 
 })*/
 router.get('/registration', ((req, res) => {
-    res.render('registration',{
-        title:"registration page",
+    res.render('registration', {
+        title: "registration page",
     })
 }))
 router.post('/registration', (async (req, res) => {
-   
-    var hashPassword=(await bCrypt.hash(req.body.password.toString(), 10)).toString()
-        const user = new User({
+
+    var hashPassword = (await bCrypt.hash(req.body.password, 10))
+    const user = new User({
         password: hashPassword,
         name: req.body.name,
         mail: req.body.mail
@@ -83,31 +84,95 @@ router.get('/out', ((req, res) => {
     res.clearCookie('UserHash')
     res.clearCookie('UserName')
     res.clearCookie('UserMail')
+    res.clearCookie('addedMails')
     res.redirect('/EnterInAccount')
 }))
-router.post('/addInGroup',(req,res)=>{
-    const {mail,addedMails} = req.body
+router.post('/addInGroup', (req, res) => {
+    const { mail, name } = req.body
+    const { cookies } = req
+    addedMails = JSON.parse(cookies.addedMails)
     addedMails.push(mail)
-    res.addedMails
-    res.redirect('createGroupWith') 
- })
-router.get('/createGroup',enterMiddle,((req,res)=>{
-    const {cookies} = req
-    let addedMails = []
-    addedMails.push(cookies.UserMail.toString())
-    
-    res.render('create',{
+    res.cookie('addedMails', JSON.stringify(addedMails))
+    res.render('create', {
         title: 'create page',
         Username: cookies.UserName,
-        addedMails
+        Mails: addedMails,
+        name
+    })
+})
+router.get('/createGroup', enterMiddle, ((req, res) => {
+    const { cookies } = req
+    var addedMails = []
+    addedMails.push(cookies.UserMail.toString())
+    res.cookie('addedMails', JSON.stringify(addedMails))
+    res.render('create', {
+        title: 'create page',
+        Username: cookies.UserName,
+        Mails: addedMails
     })
 }))
-router.get('/createGroupWith',enterMiddle,((req,res)=>{
-    const {cookies,addedMails} = req
-    res.render('create',{
-        title: 'create page',
-        Username: cookies.UserName,
-        addedMails
+
+router.post('/saveGroup', enterMiddle, (async (req, res) => {
+    const { name } = req.body
+    const { cookies } = req
+    let foundedMails = []
+    addedMails = JSON.parse(cookies.addedMails)
+    for (var i = 0; i < addedMails.length; i++) {
+        user = await User.findOne({ mail: addedMails[i] })
+        if (!user) {
+            console.log('user ' + addedMails[i].toString() + ' not found')
+        }
+        else {
+            foundedMails.push({
+                name: user.name,
+                mail: user.mail
+            })
+        }
+
+    }
+    const newGroup = new GroupOfUsers({
+        name: name,
+        users: foundedMails
     })
+    await newGroup.save()
+    res.clearCookie('addedMails')
+    res.redirect('/')
+
+}))
+
+router.get('/redGroup', enterMiddle, ((req, res) => {
+    const { cookies } = req
+    addedMails = JSON.parse(cookies.addedMails)
+    res.render('edit', {
+        title: 'edit page',
+        Username: cookies.UserName,
+        Mails: addedMails
+    })
+}))
+
+router.post('/saveExistedGroup', enterMiddle, (async (req, res) => {
+    const { name } = req.body
+    const { cookies } = req
+    let foundedMails = []
+    addedMails = JSON.parse(cookies.addedMails)
+    for (var i = 0; i < addedMails.length; i++) {
+        user = await User.findOne({ mail: addedMails[i] })
+        if (!user) {
+            console.log('user ' + addedMails[i].toString() + ' not found')
+        }
+        else {
+            foundedMails.push({
+                name: user.name,
+                mail: user.mail
+            })
+        }
+
+    }
+    const Group = await GroupOfUsers.findOne({name:name}).lean()
+    
+    await newGroup.save()
+    res.clearCookie('addedMails')
+    res.redirect('/')
+
 }))
 module.exports = router

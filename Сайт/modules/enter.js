@@ -4,9 +4,9 @@ const jwt = require('jsonwebtoken')
 const cookie = require('cookie-parser')
 var User = mongoose.model('user')
 const {jwtSecret} = require('../config/app')
-const logIn = (req, res) => {
+const logIn = (async (req, res) => {
     const { email, password } = req.body
-    User.findOne({ email })
+    User.findOne({ mail : email })
         .exec()
         .then((user => {
             if (!user) {
@@ -27,7 +27,7 @@ const logIn = (req, res) => {
             }
 
         }))
-    }
+    })
 
 module.exports = { logIn }
 
