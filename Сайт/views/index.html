@@ -3,11 +3,13 @@
 <ul>
     {{#each OurGroup}}
     <li class='todo'>
-
-        <label>
-            <a>{{name}}</a>
-        </label>
-
+        <form>
+            <label>
+                <a>{{name}}</a>
+                <button type='submit' formmethod="POST" formaction="/sendEmail" class='btn'>Send invite</button>
+                <input type="hidden" value="{{mail}}" name="mail">
+            </label>
+        </form>
     </li>
     {{/each}}
 </ul>
@@ -17,6 +19,6 @@
 <p>
     <li><a href="/createGroup">Создать группу</a></li>
 </p>
-<p>
+<!--<p>
     <li><a href="/redGroup">Изменить группу</a></li>
-</p>
+</p>-->

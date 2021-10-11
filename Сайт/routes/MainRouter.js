@@ -22,7 +22,7 @@ router.get('/', enterMiddle, async (req, res) => {
         res.render('index', {
             title: "main page",
             Username: 'Not found',
-            GrUsers
+            OurGroup: GrUsers.users
         })
     }
 
@@ -175,4 +175,12 @@ router.post('/saveExistedGroup', enterMiddle, (async (req, res) => {
     res.redirect('/')
 
 }))
+
+router.post('/sendEmail', enterMiddle,(req,res)=>{
+  // console.log(req)
+  const {mail} = req.body
+  console.log(mail) 
+  
+  res.redirect('/') 
+})
 module.exports = router
