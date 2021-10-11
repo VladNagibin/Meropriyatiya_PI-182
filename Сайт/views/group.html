@@ -1,0 +1,17 @@
+<h2>Group page</h2>
+{{#if OurGroup.length}}
+<ul>
+    {{#each OurGroup}}
+    <li class='todo'>
+        <form>
+            <label>
+                <a>{{name}}</a>
+                <button type='submit' formmethod="POST" formaction="/sendEmail" class='btn'>Send invite</button>
+                <input type="hidden" value="{{mail}}" name="nameOfGroup">
+            </label>
+        </form>
+    </li>
+    {{/each}}
+</ul>
+
+{{/if}}

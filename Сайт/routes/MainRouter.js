@@ -10,19 +10,19 @@ const enterMiddle = require('../middleware/enter')
 
 router.get('/', enterMiddle, async (req, res) => {
     const { cookies } = req
-    GrUsers = await GroupOfUsers.findOne({ "users.mail": cookies.UserMail.toString() }).lean()
+    GrUsers = await GroupOfUsers.find({ "users.mail": cookies.UserMail.toString() }).lean()
     if ('UserName' in cookies) {
         res.render('index', {
             title: "main page",
             Username: cookies.UserName,
-            OurGroup: GrUsers.users
+            OurGroup: GrUsers
         })
     }
     else {
         res.render('index', {
             title: "main page",
             Username: 'Not found',
-            OurGroup: GrUsers.users
+            OurGroup: GrUsers
         })
     }
 
@@ -149,6 +149,17 @@ router.get('/redGroup', enterMiddle, ((req, res) => {
         Mails: addedMails
     })
 }))
+router.post('/openGroup',enterMiddle,(async (req,res)=>{
+    const {idOfGroup} = req.body
+    const { cookies } = req
+    group = await GroupOfUsers.findById(idOfGroup).lean()
+    res.render('group',{
+        title: 'Group page',
+        OurGroup: group.users,
+        Username: cookies.UserName
+
+    })
+}))
 
 router.post('/saveExistedGroup', enterMiddle, (async (req, res) => {
     const { name } = req.body
@@ -156,7 +167,7 @@ router.post('/saveExistedGroup', enterMiddle, (async (req, res) => {
     let foundedMails = []
     addedMails = JSON.parse(cookies.addedMails)
     for (var i = 0; i < addedMails.length; i++) {
-        user = await User.findOne({ mail: addedMails[i] })
+        user = await User.findOne({ mail : addedMails[i] })
         if (!user) {
             console.log('user ' + addedMails[i].toString() + ' not found')
         }
@@ -183,4 +194,29 @@ router.post('/sendEmail', enterMiddle,(req,res)=>{
   
   res.redirect('/') 
 })
+
+/*$(function () {
+    var send_mail = function () {
+        var data = {
+            'from': 'from@example.com',
+            'to': ['subscriber@example.com'],
+            'subject': 'Hello world!',
+            'html_body': '<html><body>Hello dear user.</body></html>'
+        };
+        $.ajax({
+            url: 'http://api.mailhandler.ru/message/send/',
+            headers: {
+                'X-Secure-Token': '<YOUR API KEY>',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            dataType: 'json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                console.log(response);
+            }
+        });
+    };
+});*/
 module.exports = router

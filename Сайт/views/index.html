@@ -6,8 +6,8 @@
         <form>
             <label>
                 <a>{{name}}</a>
-                <button type='submit' formmethod="POST" formaction="/sendEmail" class='btn'>Send invite</button>
-                <input type="hidden" value="{{mail}}" name="mail">
+                <button type='submit' formmethod="POST" formaction="/openGroup" class='btn'>Open group</button>
+                <input type="hidden" value="{{_id}}" name="idOfGroup">
             </label>
         </form>
     </li>
