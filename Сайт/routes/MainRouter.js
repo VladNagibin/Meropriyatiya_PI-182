@@ -88,7 +88,7 @@ router.get('/out', ((req, res) => {
     res.redirect('/EnterInAccount')
 }))
 router.post('/addInGroup', (req, res) => {
-    const { mail, name } = req.body
+    const { mail, name, location } = req.body
     const { cookies } = req
     addedMails = JSON.parse(cookies.addedMails)
     addedMails.push(mail)
@@ -97,7 +97,8 @@ router.post('/addInGroup', (req, res) => {
         title: 'create page',
         Username: cookies.UserName,
         Mails: addedMails,
-        name
+        name,
+        location
     })
 })
 router.get('/createGroup', enterMiddle, ((req, res) => {
@@ -113,7 +114,7 @@ router.get('/createGroup', enterMiddle, ((req, res) => {
 }))
 
 router.post('/saveGroup', enterMiddle, (async (req, res) => {
-    const { name } = req.body
+    const { name , location} = req.body
     const { cookies } = req
     let foundedMails = []
     addedMails = JSON.parse(cookies.addedMails)
@@ -132,7 +133,8 @@ router.post('/saveGroup', enterMiddle, (async (req, res) => {
     }
     const newGroup = new GroupOfUsers({
         name: name,
-        users: foundedMails
+        users: foundedMails,
+        startLocation: location
     })
     await newGroup.save()
     res.clearCookie('addedMails')
@@ -156,11 +158,30 @@ router.post('/openGroup',enterMiddle,(async (req,res)=>{
     res.render('group',{
         title: 'Group page',
         OurGroup: group.users,
-        Username: cookies.UserName
+        Username: cookies.UserName,
+        nameGr: group.name,
+        location: group.startLocation,
+        id:group._id,
+        events:group.events
 
     })
 }))
+router.post('/addEvent',enterMiddle,(async (req,res)=>{
+    const {id,name,date,time,location}=req.body
+    const {cookies}=req
+    group=await GroupOfUsers.findById(id)
+    group.events.push({
+        location:location,
+        name:name,
+        date:date,
+        time:time,
+    })
+    await group.save()
+    //res.body.idOfGroup=id;
+    res.redirect('/')
 
+
+}))
 router.post('/saveExistedGroup', enterMiddle, (async (req, res) => {
     const { name } = req.body
     const { cookies } = req

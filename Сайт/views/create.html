@@ -8,6 +8,10 @@
     <div class='input-field'>
         <input type='text' name='mail'>
     </div>
+    <label>Начальная локация</label>
+    <div class='input-field'>
+        <input type='text' name='location' value={{location}}>
+    </div>
     {{#if Mails.length}}
     <ul>
         {{#each Mails}}

@@ -1,4 +1,4 @@
-<h2>Group page</h2>
+<h2>{{nameGr}}</h2>
 {{#if OurGroup.length}}
 <ul>
     {{#each OurGroup}}
@@ -12,6 +12,44 @@
         </form>
     </li>
     {{/each}}
+    <label>
+        <a>{{location}}</a>
+    </label>
+    {{#each events}}
+    <label>
+        <br>
+        <a>{{name}}</a>
+        <br>
+        <a>{{date}}</a>
+        <br>
+        <a>{{time}}</a>
+        <br>
+        <a>{{location}}</a>
+        <br>
+    {{/each}}
+    <form>
+        <label>
+            <input type="hidden" value="{{id}}" name="id">
+        </label>
+        <label>Название</label>
+        <div class='input-field'>
+            <input type='text' name='name'>
+        </div>
+        <label>Дата</label>
+        <div class='input-field'>
+            <input type='text' name='date'>
+        </div>
+        <label>Время</label>
+        <div class='input-field'>
+            <input type='text' name='time'>
+        </div>
+        <label>Локация</label>
+        <div class='input-field'>
+            <input type='text' name='location'>
+        </div>
+        <button type='submit' formmethod="POST" formaction="/addEvent" class='btn'>Add event</button>
+
+    </form>
 </ul>
 
 {{/if}}
