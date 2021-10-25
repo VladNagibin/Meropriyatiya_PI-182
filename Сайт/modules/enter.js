@@ -19,6 +19,7 @@ const logIn = (async (req, res) => {
                 res.cookie('UserHash',token.toString())
                 res.cookie('UserName',user.name,toString())
                 res.cookie('UserMail',user.mail,toString())
+                //res.cookie('UserRole',user.roleId,toString())
                 res.redirect('/')
                 //res.json({ token })
             }
@@ -28,8 +29,34 @@ const logIn = (async (req, res) => {
 
         }))
     })
+const registration = (async (req, res) => {
 
-module.exports = { logIn }
+    var hashPassword = (await bCrypt.hash(req.body.password, 10))
+    const user = new User({
+        password: hashPassword,
+        name: req.body.name,
+        mail: req.body.mail
+    })
+
+
+
+    await user.save()
+
+    console.log("Пользователь зарегистрирован: " + user.name)
+
+    res.redirect('/')
+
+})
+const out = ((req, res) => {
+    res.clearCookie('UserHash')
+    res.clearCookie('UserName')
+    res.clearCookie('UserMail')
+    res.clearCookie('addedMails')
+    res.redirect('/EnterInAccount')
+})
+
+
+module.exports = { logIn,registration,out }
 
 
 

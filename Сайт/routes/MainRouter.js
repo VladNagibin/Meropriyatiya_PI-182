@@ -6,7 +6,7 @@ const GroupOfUsers = require('../models/GroupOfUsers')
 const Cookies = require('cookies')
 const enter = require('../modules/enter')
 const enterMiddle = require('../middleware/enter')
-
+const group = require('../modules/group')
 
 router.get('/', enterMiddle, async (req, res) => {
     const { cookies } = req
@@ -34,180 +34,68 @@ router.get('/EnterInAccount', ((req, res) => {
         title: "Enter page",
     })
 }))
-
-
-
-
-router.post('/enter', enter.logIn)/*( async(req, res) => {
-   var login=await User.findOne({mail:req.body.mail})
-        if(login!=null){
-            const isValid = bCrypt.compareSync(password,login.password)
-            if (isValid){
-                const token = jwt.sign(login.id.toString(),jwtSecret)
-                
-                cookies.set('enter',token,{signed:true})
-            }
-            console.log("Вход выполнен")
-            res.redirect('/')
-        }
-        else{
-            console.log("Вход не выполнен")
-            res.redirect('/EnterInAccount')
-        }
-
-
-})*/
+router.get('/out', enter.out)
+router.post('/registration', enter.registration)
+router.post('/enter', enter.logIn)
 router.get('/registration', ((req, res) => {
     res.render('registration', {
         title: "registration page",
     })
 }))
-router.post('/registration', (async (req, res) => {
 
-    var hashPassword = (await bCrypt.hash(req.body.password, 10))
-    const user = new User({
-        password: hashPassword,
-        name: req.body.name,
-        mail: req.body.mail
-    })
+//группы пользователей
 
 
 
-    await user.save()
+router.post('/addInGroup', group.addInGroup)
 
-    console.log("Пользователь зарегистрирован: " + user.name)
+router.get('/createGroup', enterMiddle, group.createGroup)
 
-    res.redirect('/')
+router.post('/saveGroup', enterMiddle, group.saveGroup)
 
-}))
-router.get('/out', ((req, res) => {
-    res.clearCookie('UserHash')
-    res.clearCookie('UserName')
-    res.clearCookie('UserMail')
-    res.clearCookie('addedMails')
-    res.redirect('/EnterInAccount')
-}))
-router.post('/addInGroup', (req, res) => {
-    const { mail, name, location } = req.body
-    const { cookies } = req
-    addedMails = JSON.parse(cookies.addedMails)
-    addedMails.push(mail)
-    res.cookie('addedMails', JSON.stringify(addedMails))
-    res.render('create', {
-        title: 'create page',
-        Username: cookies.UserName,
-        Mails: addedMails,
-        name,
-        location
-    })
-})
-router.get('/createGroup', enterMiddle, ((req, res) => {
-    const { cookies } = req
-    var addedMails = []
-    addedMails.push(cookies.UserMail.toString())
-    res.cookie('addedMails', JSON.stringify(addedMails))
-    res.render('create', {
-        title: 'create page',
-        Username: cookies.UserName,
-        Mails: addedMails
-    })
-}))
+router.get('/redGroup', enterMiddle, group.redGroup)
 
-router.post('/saveGroup', enterMiddle, (async (req, res) => {
-    const { name , location} = req.body
-    const { cookies } = req
-    let foundedMails = []
-    addedMails = JSON.parse(cookies.addedMails)
-    for (var i = 0; i < addedMails.length; i++) {
-        user = await User.findOne({ mail: addedMails[i] })
-        if (!user) {
-            console.log('user ' + addedMails[i].toString() + ' not found')
-        }
-        else {
-            foundedMails.push({
-                name: user.name,
-                mail: user.mail
-            })
-        }
+router.post('/saveExistedGroup', enterMiddle, group.saveExistedGroup)
 
-    }
-    const newGroup = new GroupOfUsers({
-        name: name,
-        users: foundedMails,
-        startLocation: location
-    })
-    await newGroup.save()
-    res.clearCookie('addedMails')
-    res.redirect('/')
-
-}))
-
-router.get('/redGroup', enterMiddle, ((req, res) => {
-    const { cookies } = req
-    addedMails = JSON.parse(cookies.addedMails)
-    res.render('edit', {
-        title: 'edit page',
-        Username: cookies.UserName,
-        Mails: addedMails
-    })
-}))
 router.post('/openGroup',enterMiddle,(async (req,res)=>{
     const {idOfGroup} = req.body
     const { cookies } = req
-    group = await GroupOfUsers.findById(idOfGroup).lean()
+    foundedGroup = await GroupOfUsers.findById(idOfGroup).lean()
     res.render('group',{
         title: 'Group page',
-        OurGroup: group.users,
+        OurGroup: foundedGroup.users,
         Username: cookies.UserName,
-        nameGr: group.name,
-        location: group.startLocation,
-        id:group._id,
-        events:group.events
+        nameGr: foundedGroup.name,
+        location: foundedGroup.startLocation,
+        id:foundedGroup._id,
+        events:foundedGroup.events
 
     })
 }))
+
+// роли
+
+router.get('/addRole', enterMiddle,((req, res)=>{
+    const { cookies } = req
+    
+}))
+
 router.post('/addEvent',enterMiddle,(async (req,res)=>{
     const {id,name,date,time,location}=req.body
     const {cookies}=req
-    group=await GroupOfUsers.findById(id)
-    group.events.push({
+    foundedGroup=await GroupOfUsers.findById(id)
+    foundedGroup.events.push({
         location:location,
         name:name,
         date:date,
         time:time,
     })
-    await group.save()
+    await foundedGroup.save()
     //res.body.idOfGroup=id;
     res.redirect('/')
 
 
 }))
-router.post('/saveExistedGroup', enterMiddle, (async (req, res) => {
-    const { name } = req.body
-    const { cookies } = req
-    let foundedMails = []
-    addedMails = JSON.parse(cookies.addedMails)
-    for (var i = 0; i < addedMails.length; i++) {
-        user = await User.findOne({ mail : addedMails[i] })
-        if (!user) {
-            console.log('user ' + addedMails[i].toString() + ' not found')
-        }
-        else {
-            foundedMails.push({
-                name: user.name,
-                mail: user.mail
-            })
-        }
-
-    }
-    const Group = await GroupOfUsers.findOne({name:name}).lean()
-    
-    await newGroup.save()
-    res.clearCookie('addedMails')
-    res.redirect('/')
-
-}))
-
 router.post('/sendEmail', enterMiddle,(req,res)=>{
   // console.log(req)
   const {mail} = req.body
