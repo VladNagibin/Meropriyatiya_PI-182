@@ -2,6 +2,7 @@ const { Router, response } = require('express')
 const router = Router()
 const bCrypt = require('bcrypt')
 const User = require('../models/User')
+const Role = require('../models/Role')
 const GroupOfUsers = require('../models/GroupOfUsers')
 const Cookies = require('cookies')
 const enter = require('../modules/enter')
@@ -11,6 +12,7 @@ const group = require('../modules/group')
 router.get('/', enterMiddle, async (req, res) => {
     const { cookies } = req
     GrUsers = await GroupOfUsers.find({ "users.mail": cookies.UserMail.toString() }).lean()
+    
     if ('UserName' in cookies) {
         res.render('index', {
             title: "main page",
@@ -75,9 +77,9 @@ router.post('/openGroup',enterMiddle,(async (req,res)=>{
 
 // роли
 
-router.get('/addRole', enterMiddle,((req, res)=>{
+router.get('/createRole', enterMiddle,((req, res)=>{
     const { cookies } = req
-    
+    res.render('create_role')
 }))
 
 router.post('/addEvent',enterMiddle,(async (req,res)=>{
@@ -103,6 +105,32 @@ router.post('/sendEmail', enterMiddle,(req,res)=>{
   
   res.redirect('/') 
 })
+router.post('/createRole',enterMiddle,(async (req,res)=>{
+    const {name,addGroup,addUsers,addRoles} = req.body
+    if (addGroup == 'on'){
+        var aGr=true
+    }else{
+        var aGr=false
+    }
+    if (addUsers == 'on'){
+        var aUs=true
+    }else{
+        var aUs=false
+    }
+    if (addRoles == 'on'){
+        var aRs=true
+    }else{
+        var aRs=false
+    }
+    const role = new Role({
+        name : name,
+        addGroups : aGr,
+        addUsers : aUs,
+        addRoles : aRs
+    })
+    await role.save()
+    res.redirect('/')
+}))
 
 /*$(function () {
     var send_mail = function () {

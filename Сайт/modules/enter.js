@@ -3,6 +3,7 @@ const bCrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const cookie = require('cookie-parser')
 var User = mongoose.model('user')
+const Role = require('../models/Role')
 const {jwtSecret} = require('../config/app')
 const logIn = (async (req, res) => {
     const { email, password } = req.body
@@ -32,10 +33,12 @@ const logIn = (async (req, res) => {
 const registration = (async (req, res) => {
 
     var hashPassword = (await bCrypt.hash(req.body.password, 10))
+    userRole = await Role.findOne({name : req.body.role})
     const user = new User({
         password: hashPassword,
         name: req.body.name,
-        mail: req.body.mail
+        mail: req.body.mail,
+        roleId : userRole._id
     })
 
 

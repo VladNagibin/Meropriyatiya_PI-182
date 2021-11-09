@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Role creation</title>
+</head>
+
+<body>
+    <h1>Создание роли</h1>
+    <form action="/createRole" method="post">
+        <label>
+            <p>
+                <b4>Наименование</b4>
+                <input name="name" type="text">
+            </p>
+        </label>
+        <label>
+            <p>
+                <input name="addGroup" type="checkbox">
+                <span>Создает группы</span>
+            </p>
+        </label>
+        <label>   
+            <p> 
+                <input name="addUsers" type="checkbox">
+                <span>Создает пользователей</span>
+            </p>
+        </label>
+        <label>    
+            <p>
+                <input name="addRoles" type="checkbox">
+                <span>Создает роли</span>
+            </p>
+
+
+            <button class="btn" type="submit">Создать</button>
+        </label>
+    </form>
+
+</body>
+
+</html>
