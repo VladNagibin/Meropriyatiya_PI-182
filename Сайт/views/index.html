@@ -15,13 +15,21 @@
 </ul>
 
 {{/if}}
-
+{{#if addGroups}}
 <p>
     <li><a href="/createGroup">Создать группу</a></li>
 </p>
+{{/if}}
+{{#if addRoles}}
 <p>
     <li><a href="/createRole">Создать роль</a></li>
 </p>
+{{/if}}
+{{#if addUsers}}
+<p>
+    <li><a>Создать пользователя</a></li>
+</p>
+{{/if}}
 <!--<p>
     <li><a href="/redGroup">Изменить группу</a></li>
 </p>-->

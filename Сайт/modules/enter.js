@@ -20,6 +20,7 @@ const logIn = (async (req, res) => {
                 res.cookie('UserHash',token.toString())
                 res.cookie('UserName',user.name,toString())
                 res.cookie('UserMail',user.mail,toString())
+                res.cookie('RoleId', user.roleId)
                 //res.cookie('UserRole',user.roleId,toString())
                 res.redirect('/')
                 //res.json({ token })
@@ -55,6 +56,7 @@ const out = ((req, res) => {
     res.clearCookie('UserName')
     res.clearCookie('UserMail')
     res.clearCookie('addedMails')
+    res.clearCookie('RoleId')
     res.redirect('/EnterInAccount')
 })
 

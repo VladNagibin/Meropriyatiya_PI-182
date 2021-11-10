@@ -12,22 +12,30 @@ const group = require('../modules/group')
 router.get('/', enterMiddle, async (req, res) => {
     const { cookies } = req
     GrUsers = await GroupOfUsers.find({ "users.mail": cookies.UserMail.toString() }).lean()
-    
+    var addGroups = false;
+    var addUsers = false;
+    var addRoles = false;
+    if ('RoleId' in cookies) {
+        role = await Role.findById(cookies.RoleId)
+        addGroups = role.addGroups
+        addUsers = role.addUsers
+        addRoles = role.addRoles
+    }
+    var username 
     if ('UserName' in cookies) {
-        res.render('index', {
-            title: "main page",
-            Username: cookies.UserName,
-            OurGroup: GrUsers
-        })
+        username = cookies.UserName
     }
     else {
-        res.render('index', {
-            title: "main page",
-            Username: 'Not found',
-            OurGroup: GrUsers
-        })
+        username = 'not found'
     }
-
+    res.render('index', {
+        title: "main page",
+        Username: username,
+        OurGroup: GrUsers,
+        addGroups : addGroups,
+        addUsers : addUsers,
+        addRoles : addRoles
+    })
 
 
 })
