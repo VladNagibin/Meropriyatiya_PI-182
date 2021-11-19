@@ -6,8 +6,9 @@
         <form>
             <label>
                 <a>{{name}}</a>
+                <input type="hidden" value="{{id}}" name = 'id'>
                 <button type='submit' formmethod="POST" formaction="/sendEmail" class='btn'>Send invite</button>
-                <input type="hidden" value="{{mail}}" name="nameOfGroup">
+                <input type="hidden" value="{{mail}}" name="mail">
             </label>
         </form>
     </li>
@@ -28,28 +29,10 @@
         <br>
     {{/each}}
     <form>
-        <label>
-            <input type="hidden" value="{{id}}" name="id">
-        </label>
-        <label>Название</label>
-        <div class='input-field'>
-            <input type='text' name='name'>
-        </div>
-        <label>Дата</label>
-        <div class='input-field'>
-            <input type='text' name='date'>
-        </div>
-        <label>Время</label>
-        <div class='input-field'>
-            <input type='text' name='time'>
-        </div>
-        <label>Локация</label>
-        <div class='input-field'>
-            <input type='text' name='location'>
-        </div>
-        <button type='submit' formmethod="POST" formaction="/addEvent" class='btn'>Add event</button>
-
+        <input type="hidden" value="{{id}}" name = 'id'>
+        <button type='submit' formmethod="POST" formaction="/openEventAdd" class='btn'>add event</button>
     </form>
+    
 </ul>
 
 {{/if}}

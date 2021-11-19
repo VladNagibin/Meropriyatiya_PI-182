@@ -6,6 +6,7 @@ const cookieParser=require('cookie-parser')
 const path = require('path')
 const PORT = process.env.PORT || 3000
 const app = express()
+//const session = require('express-session')
 const hbs = handlebars.create()
 var conn = 'mongodb+srv://Vlad:qwerty123@cluster0.fxyla.mongodb.net/db'
 

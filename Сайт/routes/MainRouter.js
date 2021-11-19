@@ -8,6 +8,9 @@ const Cookies = require('cookies')
 const enter = require('../modules/enter')
 const enterMiddle = require('../middleware/enter')
 const group = require('../modules/group')
+const session = require('express-session')
+
+
 
 router.get('/', enterMiddle, async (req, res) => {
     const { cookies } = req
@@ -82,6 +85,21 @@ router.post('/openGroup',enterMiddle,(async (req,res)=>{
 
     })
 }))
+router.get('/openGroup',enterMiddle,(async(req,res)=>{
+    const {id} = req.query
+    const { cookies } = req
+    foundedGroup = await GroupOfUsers.findById(id).lean()
+    res.render('group',{
+        title: 'Group page',
+        OurGroup: foundedGroup.users,
+        Username: cookies.UserName,
+        nameGr: foundedGroup.name,
+        location: foundedGroup.startLocation,
+        id:foundedGroup._id,
+        events:foundedGroup.events
+
+    })
+}))
 
 // роли
 
@@ -89,7 +107,13 @@ router.get('/createRole', enterMiddle,((req, res)=>{
     const { cookies } = req
     res.render('create_role')
 }))
-
+router.post('/openEventAdd',enterMiddle,(async (req,res)=>{
+    const {id} = req.body
+    res.render('create_event',{
+        id:id
+    })  
+    
+}))
 router.post('/addEvent',enterMiddle,(async (req,res)=>{
     const {id,name,date,time,location}=req.body
     const {cookies}=req
@@ -101,8 +125,11 @@ router.post('/addEvent',enterMiddle,(async (req,res)=>{
         time:time,
     })
     await foundedGroup.save()
+    //var idOfGroup = {idOfGroup : id}
+    //req.session.group_id = id
     //res.body.idOfGroup=id;
-    res.redirect('/')
+    //res.send(idJson)
+    res.redirect('/openGroup?id='+id.toString())
 
 
 }))

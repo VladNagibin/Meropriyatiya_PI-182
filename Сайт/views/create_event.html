@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Event creation</title>
+</head>
+
+<body>
+    <h1>Создание события</h1>
+    <form>
+        <label>
+            <input type="hidden" value="{{id}}" name="id">
+        </label>
+        <label>Название</label>
+        <div class='input-field'>
+            <input type='text' name='name'>
+        </div>
+        <label>Дата</label>
+        <div class='input-field'>
+            <input type='date' name='date'>
+        </div>
+        <label>Время</label>
+        <div class='input-field'>
+            <input type='time' name='time'>
+        </div>
+        <label>Локация</label>
+        <div class='input-field'>
+            <input type='text' name='location'>
+        </div>
+        <button type='submit' formmethod="POST" formaction="/addEvent" class='btn'>Add event</button>
+
+    </form>
+
+</body>
+
+</html>
