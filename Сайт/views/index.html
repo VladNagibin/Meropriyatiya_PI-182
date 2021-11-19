@@ -7,6 +7,7 @@
             <label>
                 <a>{{name}}</a>
                 <button type='submit' formmethod="GET" formaction="/openGroup?id={{_id}}" class='btn'>Open group</button>
+                <button type='submit' formmethod="POST" formaction="/deleteGroup?id={{_id}}" class='btn'>Delete group</button>
                 <input type="hidden" value="{{_id}}" name="id">
             </label>
         </form>

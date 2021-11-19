@@ -6,8 +6,9 @@
         <form>
             <label>
                 <a>{{name}}</a>
-                <input type="hidden" value="{{id}}" name = 'id'>
+                <input type="hidden" value="{{../id}}" name='id'>
                 <button type='submit' formmethod="POST" formaction="/sendEmail" class='btn'>Send invite</button>
+                <button type='submit' formmethod="POST" formaction="/delete_user_from_group" class='btn'>Delete</button>
                 <input type="hidden" value="{{mail}}" name="mail">
             </label>
         </form>
@@ -18,21 +19,25 @@
     </label>
     {{#each events}}
     <label>
-        <br>
-        <a>{{name}}</a>
-        <br>
-        <a>{{date}}</a>
-        <br>
-        <a>{{time}}</a>
-        <br>
-        <a>{{location}}</a>
-        <br>
-    {{/each}}
-    <form>
-        <input type="hidden" value="{{id}}" name = 'id'>
-        <button type='submit' formmethod="POST" formaction="/openEventAdd" class='btn'>add event</button>
-    </form>
-    
+        <form>
+            <br>
+            <a>{{name}}</a>
+            <br>
+            <a>{{date}}</a>
+            <br>
+            <a>{{time}}</a>
+            <br>
+            <a>{{location}}</a>
+            <br>
+            <button type='submit' formmethod="POST" formaction="/delete_event_from_group?id={{../id}}&name={{name}}"
+                class='btn'>delete event</button>
+        </form>
+        {{/each}}
+        <form>
+            <input type="hidden" value="{{id}}" name='id'>
+            <button type='submit' formmethod="POST" formaction="/openEventAdd" class='btn'>add event</button>
+        </form>
+
 </ul>
 
 {{/if}}

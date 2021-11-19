@@ -81,10 +81,37 @@ router.get('/openGroup',enterMiddle,(async(req,res)=>{
         Username: cookies.UserName,
         nameGr: foundedGroup.name,
         location: foundedGroup.startLocation,
-        id:foundedGroup._id,
+        id,
         events:foundedGroup.events
 
     })
+}))
+router.post('/delete_event_from_group',enterMiddle,(async(req,res)=>{
+    const {id, name} = req.query
+    foundedGroup = await GroupOfUsers.findById(id)
+    for(var i = 0;i<foundedGroup.events.length;i++){
+        if(foundedGroup.events[i].name == name){
+            foundedGroup.events.splice(i,1)
+        }
+    }
+    await foundedGroup.save()
+    res.redirect('/openGroup?id='+id.toString())
+}))
+router.post('/delete_user_from_group',enterMiddle,(async(req,res)=>{
+    const {id, mail} = req.body
+    foundedGroup = await GroupOfUsers.findById(id)
+    for(var i = 0;i<foundedGroup.users.length;i++){
+        if(foundedGroup.users[i].mail == mail){
+            foundedGroup.users.splice(i,1)
+        }
+    }
+    await foundedGroup.save()
+    res.redirect('/openGroup?id='+id.toString())
+}))
+router.post('/deleteGroup',enterMiddle,(async(req,res)=>{
+    const {id} = req.query
+    await GroupOfUsers.deleteOne({_id : id})
+    res.redirect('/')
 }))
 
 // роли

@@ -2,7 +2,7 @@ const cookie = require('cookie-parser')
 const mongoose = require('mongoose')
 
 const addInGroup = (req, res) => {
-    const { mail, name } = req.body
+    const { mail, name,location } = req.body
     const { cookies } = req
     addedMails = JSON.parse(cookies.addedMails)
     addedMails.push(mail)
@@ -11,7 +11,8 @@ const addInGroup = (req, res) => {
         title: 'create page',
         Username: cookies.UserName,
         Mails: addedMails,
-        name
+        name,
+        location
     })
 }
 
