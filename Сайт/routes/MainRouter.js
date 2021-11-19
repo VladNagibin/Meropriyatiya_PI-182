@@ -70,21 +70,7 @@ router.get('/redGroup', enterMiddle, group.redGroup)
 
 router.post('/saveExistedGroup', enterMiddle, group.saveExistedGroup)
 
-router.post('/openGroup',enterMiddle,(async (req,res)=>{
-    const {idOfGroup} = req.body
-    const { cookies } = req
-    foundedGroup = await GroupOfUsers.findById(idOfGroup).lean()
-    res.render('group',{
-        title: 'Group page',
-        OurGroup: foundedGroup.users,
-        Username: cookies.UserName,
-        nameGr: foundedGroup.name,
-        location: foundedGroup.startLocation,
-        id:foundedGroup._id,
-        events:foundedGroup.events
 
-    })
-}))
 router.get('/openGroup',enterMiddle,(async(req,res)=>{
     const {id} = req.query
     const { cookies } = req

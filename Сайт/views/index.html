@@ -6,8 +6,8 @@
         <form>
             <label>
                 <a>{{name}}</a>
-                <button type='submit' formmethod="POST" formaction="/openGroup" class='btn'>Open group</button>
-                <input type="hidden" value="{{_id}}" name="idOfGroup">
+                <button type='submit' formmethod="GET" formaction="/openGroup?id={{_id}}" class='btn'>Open group</button>
+                <input type="hidden" value="{{_id}}" name="id">
             </label>
         </form>
     </li>
