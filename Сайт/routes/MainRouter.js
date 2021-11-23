@@ -60,7 +60,7 @@ router.get('/registration', ((req, res) => {
 
 
 
-router.post('/addInGroup', group.addInGroup)
+router.post('/addInGroup',enterMiddle, group.addInGroup)
 
 router.get('/createGroup', enterMiddle, group.createGroup)
 
@@ -118,12 +118,16 @@ router.post('/deleteGroup',enterMiddle,(async(req,res)=>{
 
 router.get('/createRole', enterMiddle,((req, res)=>{
     const { cookies } = req
-    res.render('create_role')
+    res.render('create_role',{
+        Username: cookies.UserName,
+    })
 }))
 router.post('/openEventAdd',enterMiddle,(async (req,res)=>{
     const {id} = req.body
+    const {cookies} = req
     res.render('create_event',{
-        id:id
+        id:id,
+        Username: cookies.UserName
     })  
     
 }))

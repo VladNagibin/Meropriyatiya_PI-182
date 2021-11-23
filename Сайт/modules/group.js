@@ -1,6 +1,7 @@
 const cookie = require('cookie-parser')
 const mongoose = require('mongoose')
-
+const User = require('../models/User')
+const GroupOfUsers = require('../models/GroupOfUsers')
 const addInGroup = (req, res) => {
     const { mail, name,location } = req.body
     const { cookies } = req
