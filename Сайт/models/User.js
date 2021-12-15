@@ -15,6 +15,15 @@ const schema = new Schema({
     roleId:{
         type:String,
         required:true
+    },
+    pic_url:{
+        type:String,
+    },
+    groups:{
+        type:Array
+    },
+    invites:{
+        type:Array
     }
     
        

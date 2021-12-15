@@ -9,12 +9,13 @@ const enter = require('../modules/enter')
 const enterMiddle = require('../middleware/enter')
 const group = require('../modules/group')
 const session = require('express-session')
+var ObjectId = require('mongodb').ObjectId
 
-
-
+//{"_id" : {"$in" : [ObjectId("616484529ee3826c60782c1f"), ObjectId("6173e63790f4ba59bcd52459")]}}
 router.get('/', enterMiddle, async (req, res) => {
     const { cookies } = req
     GrUsers = await GroupOfUsers.find({ "users.mail": cookies.UserMail.toString() }).lean()
+    user = await User.findById(cookies.UserId.toString()).lean()
     var addGroups = false;
     var addUsers = false;
     var addRoles = false;
@@ -37,7 +38,8 @@ router.get('/', enterMiddle, async (req, res) => {
         OurGroup: GrUsers,
         addGroups : addGroups,
         addUsers : addUsers,
-        addRoles : addRoles
+        addRoles : addRoles,
+        invites : user.invites
     })
 
 
@@ -54,6 +56,37 @@ router.get('/registration', ((req, res) => {
     res.render('registration', {
         title: "registration page",
     })
+}))
+router.post("/acceptInvite",(async (req,res)=>{
+    const {id, name} = req.query
+    const {cookies} = req
+    fGroup = await GroupOfUsers.findById(id);
+    for(var i = 0;i<fGroup.users.length;i++){
+        if(fGroup.users[i].mail == cookies.UserMail){
+            fGroup.users[i].accepted = true
+        }
+    }
+    await fGroup.save()
+    // user = await User.findOne({"mail":cookies.UserMail.toString()})
+    // for(var i = 0;i<user.invites.length;i++){
+    //     if(user.invites[i].id == id){
+    //         user.invites.splice(i,1)
+    //     }
+    // } 
+    // await user.save()
+    res.redirect('/')
+}))
+router.post("/cancelInvite",(async (req,res)=>{
+    const {id, name} = req.query
+    const {cookies} = req
+    user = await User.findOne({"mail":cookies.UserMail.toString()})
+    for(var i = 0;i<user.invites.length;i++){
+        if(user.invites[i].id == id){
+            user.invites.splice(i,1)
+        }
+    } 
+    await user.save()
+    res.redirect('/')
 }))
 
 //группы пользователей

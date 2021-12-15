@@ -18,8 +18,9 @@ const logIn = (async (req, res) => {
             if (isValid) {
                 const token = jwt.sign(user._id.toString(),jwtSecret)
                 res.cookie('UserHash',token.toString())
-                res.cookie('UserName',user.name,toString())
-                res.cookie('UserMail',user.mail,toString())
+                res.cookie('UserName',user.name)
+                res.cookie('UserMail',user.mail)
+                res.cookie('UserId',user._id)
                 res.cookie('RoleId', user.roleId)
                 //res.cookie('UserRole',user.roleId,toString())
                 res.redirect('/')

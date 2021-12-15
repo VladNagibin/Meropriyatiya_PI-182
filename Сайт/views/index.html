@@ -1,5 +1,6 @@
 <h2>Main page</h2>
 {{#if OurGroup.length}}
+<h2>Groups</h2>
 <ul>
     {{#each OurGroup}}
     <li class='todo'>
@@ -9,6 +10,23 @@
                 <button type='submit' formmethod="GET" formaction="/openGroup?id={{_id}}" class='btn'>Open group</button>
                 <button type='submit' formmethod="POST" formaction="/deleteGroup?id={{_id}}" class='btn'>Delete group</button>
                 <input type="hidden" value="{{_id}}" name="id">
+            </label>
+        </form>
+    </li>
+    {{/each}}
+</ul>
+{{/if}}
+{{#if invites.length}}
+<h2>Invites</h2>
+<ul>
+    {{#each invites}}
+    <li class='todo'>
+        <form>
+            <label>
+                <a>{{name}}</a>
+                <button type='submit' formmethod="POST" formaction="/acceptInvite?id={{id}}" class='btn'>Accept</button>
+                <button type='submit' formmethod="POST" formaction="/cancelInvite?id={{id}}" class='btn'>Cancel</button>
+                <input type="hidden" value="{{id}}" name="id">
             </label>
         </form>
     </li>

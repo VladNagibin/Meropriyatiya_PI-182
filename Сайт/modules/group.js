@@ -33,6 +33,7 @@ const saveGroup = (async (req, res) => {
     const { name } = req.body
     const { cookies } = req
     let foundedMails = []
+    let users = []
     addedMails = JSON.parse(cookies.addedMails)
     for (var i = 0; i < addedMails.length; i++) {
         user = await User.findOne({ mail: addedMails[i] })
@@ -42,16 +43,30 @@ const saveGroup = (async (req, res) => {
         else {
             foundedMails.push({
                 name: user.name,
-                mail: user.mail
+                mail: user.mail,
+                accepted: false
+            })
+            users.push({
+                user
             })
         }
 
+
     }
-    const newGroup = new GroupOfUsers({
+    var newGroup = new GroupOfUsers({
         name: name,
         users: foundedMails
     })
     await newGroup.save()
+    var id = newGroup._id
+    var nameGr = newGroup.name
+    for (var i =1;i<users.length;i++){
+        users[i].user.invites.push({
+            id:id,
+            name:nameGr
+        })
+        await users[i].user.save()
+    }
     res.clearCookie('addedMails')
     res.redirect('/')
 
