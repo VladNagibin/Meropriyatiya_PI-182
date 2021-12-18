@@ -6,6 +6,10 @@
         <form>
             <label>
                 <a>{{name}}</a>
+                {{#if accepted}}
+                {{else}}
+                <a>Приглашен</a>
+                {{/if}}
                 <input type="hidden" value="{{../id}}" name='id'>
                 <button type='submit' formmethod="POST" formaction="/sendEmail" class='btn'>Send invite</button>
                 <button type='submit' formmethod="POST" formaction="/delete_user_from_group" class='btn'>Delete</button>

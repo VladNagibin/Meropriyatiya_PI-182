@@ -14,8 +14,14 @@ var ObjectId = require('mongodb').ObjectId
 //{"_id" : {"$in" : [ObjectId("616484529ee3826c60782c1f"), ObjectId("6173e63790f4ba59bcd52459")]}}
 router.get('/', enterMiddle, async (req, res) => {
     const { cookies } = req
-    GrUsers = await GroupOfUsers.find({ "users.mail": cookies.UserMail.toString() }).lean()
     user = await User.findById(cookies.UserId.toString()).lean()
+    let idGr=[]
+    for(var i =0;i<user.groups.length;i++){
+        idGr.push(ObjectId(user.groups[i].id))
+    }
+
+    GrUsers = await GroupOfUsers.find({"_id" : {"$in" : idGr}}).lean()
+    
     var addGroups = false;
     var addUsers = false;
     var addRoles = false;
@@ -25,7 +31,7 @@ router.get('/', enterMiddle, async (req, res) => {
         addUsers = role.addUsers
         addRoles = role.addRoles
     }
-    var username 
+    var username
     if ('UserName' in cookies) {
         username = cookies.UserName
     }
@@ -36,10 +42,10 @@ router.get('/', enterMiddle, async (req, res) => {
         title: "main page",
         Username: username,
         OurGroup: GrUsers,
-        addGroups : addGroups,
-        addUsers : addUsers,
-        addRoles : addRoles,
-        invites : user.invites
+        addGroups: addGroups,
+        addUsers: addUsers,
+        addRoles: addRoles,
+        invites: user.invites
     })
 
 
@@ -57,35 +63,60 @@ router.get('/registration', ((req, res) => {
         title: "registration page",
     })
 }))
-router.post("/acceptInvite",(async (req,res)=>{
-    const {id} = req.query
-    const {cookies} = req
-    fGroup = await GroupOfUsers.findById(id);
-    for(var i = 0;i<fGroup.users.length;i++){
-        if(fGroup.users[i].mail == cookies.UserMail){
-            fGroup.users[i].accepted = true
+router.post("/acceptInvite", (async (req, res) => {
+    const { id } = req.query
+    const { cookies } = req
+    fGroup = await GroupOfUsers.findOne({ "_id": ObjectId(id) });
+    //fGroup.name = fGroup.name + "asd";
+    for (var i = 0; i < fGroup.users.length; i++) {
+        if (fGroup.users[i].mail == cookies.UserMail) {
+            var mail = fGroup.users[i].mail
+            var name = fGroup.users[i].name
+            fGroup.users.splice(i, 1)
+            fGroup.users.push({
+                name: name,
+                mail: mail,
+                accepted: true
+            })
+
+
         }
     }
+
     await fGroup.save()
-    // user = await User.findOne({"mail":cookies.UserMail.toString()})
-    // for(var i = 0;i<user.invites.length;i++){
-    //     if(user.invites[i].id == id){
-    //         user.invites.splice(i,1)
-    //     }
-    // } 
-    // await user.save()
+    user = await User.findOne({ "mail": cookies.UserMail.toString() })
+    user.groups.push({
+        id:id,
+        name:fGroup.name
+    })
+    //await user.save()
+    for (var i = 0; i < user.invites.length; i++) {
+        if (user.invites[i].id == id) {
+            user.invites.splice(i, 1)
+        }
+    }
+
+    await user.save()
     res.redirect('/')
 }))
-router.post("/cancelInvite",(async (req,res)=>{
-    const {id, name} = req.query
-    const {cookies} = req
-    user = await User.findOne({"mail":cookies.UserMail.toString()})
-    for(var i = 0;i<user.invites.length;i++){
-        if(user.invites[i].id == id){
-            user.invites.splice(i,1)
+router.post("/cancelInvite", (async (req, res) => {
+    const { id, name } = req.query
+    const { cookies } = req
+    user = await User.findOne({ "mail": cookies.UserMail.toString() })
+    for (var i = 0; i < user.invites.length; i++) {
+        if (user.invites[i].id == id) {
+            user.invites.splice(i, 1)
         }
-    } 
+    }
     await user.save()
+    fgroup = await GroupOfUsers.findById(id)
+    for (var i = 0; i < fgroup.users.length; i++) {
+        if (fgroup.users[i].mail == user.mail) {
+            fgroup.users.splice(i, 1)
+        }
+    }
+    await fgroup.save()
+    
     res.redirect('/')
 }))
 
@@ -93,7 +124,7 @@ router.post("/cancelInvite",(async (req,res)=>{
 
 
 
-router.post('/addInGroup',enterMiddle, group.addInGroup)
+router.post('/addInGroup', enterMiddle, group.addInGroup)
 
 router.get('/createGroup', enterMiddle, group.createGroup)
 
@@ -104,114 +135,114 @@ router.get('/redGroup', enterMiddle, group.redGroup)
 router.post('/saveExistedGroup', enterMiddle, group.saveExistedGroup)
 
 
-router.get('/openGroup',enterMiddle,(async(req,res)=>{
-    const {id} = req.query
+router.get('/openGroup', enterMiddle, (async (req, res) => {
+    const { id } = req.query
     const { cookies } = req
     foundedGroup = await GroupOfUsers.findById(id).lean()
-    res.render('group',{
+    res.render('group', {
         title: 'Group page',
         OurGroup: foundedGroup.users,
         Username: cookies.UserName,
         nameGr: foundedGroup.name,
         location: foundedGroup.startLocation,
         id,
-        events:foundedGroup.events
+        events: foundedGroup.events
 
     })
 }))
-router.post('/delete_event_from_group',enterMiddle,(async(req,res)=>{
-    const {id, name} = req.query
+router.post('/delete_event_from_group', enterMiddle, (async (req, res) => {
+    const { id, name } = req.query
     foundedGroup = await GroupOfUsers.findById(id)
-    for(var i = 0;i<foundedGroup.events.length;i++){
-        if(foundedGroup.events[i].name == name){
-            foundedGroup.events.splice(i,1)
+    for (var i = 0; i < foundedGroup.events.length; i++) {
+        if (foundedGroup.events[i].name == name) {
+            foundedGroup.events.splice(i, 1)
         }
     }
     await foundedGroup.save()
-    res.redirect('/openGroup?id='+id.toString())
+    res.redirect('/openGroup?id=' + id.toString())
 }))
-router.post('/delete_user_from_group',enterMiddle,(async(req,res)=>{
-    const {id, mail} = req.body
+router.post('/delete_user_from_group', enterMiddle, (async (req, res) => {
+    const { id, mail } = req.body
     foundedGroup = await GroupOfUsers.findById(id)
-    for(var i = 0;i<foundedGroup.users.length;i++){
-        if(foundedGroup.users[i].mail == mail){
-            foundedGroup.users.splice(i,1)
+    for (var i = 0; i < foundedGroup.users.length; i++) {
+        if (foundedGroup.users[i].mail == mail) {
+            foundedGroup.users.splice(i, 1)
         }
     }
     await foundedGroup.save()
-    res.redirect('/openGroup?id='+id.toString())
+    res.redirect('/openGroup?id=' + id.toString())
 }))
-router.post('/deleteGroup',enterMiddle,(async(req,res)=>{
-    const {id} = req.query
-    await GroupOfUsers.deleteOne({_id : id})
+router.post('/deleteGroup', enterMiddle, (async (req, res) => {
+    const { id } = req.query
+    await GroupOfUsers.deleteOne({ _id: id })
     res.redirect('/')
 }))
 
 // роли
 
-router.get('/createRole', enterMiddle,((req, res)=>{
+router.get('/createRole', enterMiddle, ((req, res) => {
     const { cookies } = req
-    res.render('create_role',{
+    res.render('create_role', {
         Username: cookies.UserName,
     })
 }))
-router.post('/openEventAdd',enterMiddle,(async (req,res)=>{
-    const {id} = req.body
-    const {cookies} = req
-    res.render('create_event',{
-        id:id,
+router.post('/openEventAdd', enterMiddle, (async (req, res) => {
+    const { id } = req.body
+    const { cookies } = req
+    res.render('create_event', {
+        id: id,
         Username: cookies.UserName
-    })  
-    
+    })
+
 }))
-router.post('/addEvent',enterMiddle,(async (req,res)=>{
-    const {id,name,date,time,location}=req.body
-    const {cookies}=req
-    foundedGroup=await GroupOfUsers.findById(id)
+router.post('/addEvent', enterMiddle, (async (req, res) => {
+    const { id, name, date, time, location } = req.body
+    const { cookies } = req
+    foundedGroup = await GroupOfUsers.findById(id)
     foundedGroup.events.push({
-        location:location,
-        name:name,
-        date:date,
-        time:time,
+        location: location,
+        name: name,
+        date: date,
+        time: time,
     })
     await foundedGroup.save()
     //var idOfGroup = {idOfGroup : id}
     //req.session.group_id = id
     //res.body.idOfGroup=id;
     //res.send(idJson)
-    res.redirect('/openGroup?id='+id.toString())
+    res.redirect('/openGroup?id=' + id.toString())
 
 
 }))
-router.post('/sendEmail', enterMiddle,(req,res)=>{
-  // console.log(req)
-  const {mail} = req.body
-  console.log(mail) 
-  
-  res.redirect('/') 
+router.post('/sendEmail', enterMiddle, (req, res) => {
+    // console.log(req)
+    const { mail } = req.body
+    console.log(mail)
+
+    res.redirect('/')
 })
-router.post('/createRole',enterMiddle,(async (req,res)=>{
-    const {name,addGroup,addUsers,addRoles} = req.body
-    if (addGroup == 'on'){
-        var aGr=true
-    }else{
-        var aGr=false
+router.post('/createRole', enterMiddle, (async (req, res) => {
+    const { name, addGroup, addUsers, addRoles } = req.body
+    if (addGroup == 'on') {
+        var aGr = true
+    } else {
+        var aGr = false
     }
-    if (addUsers == 'on'){
-        var aUs=true
-    }else{
-        var aUs=false
+    if (addUsers == 'on') {
+        var aUs = true
+    } else {
+        var aUs = false
     }
-    if (addRoles == 'on'){
-        var aRs=true
-    }else{
-        var aRs=false
+    if (addRoles == 'on') {
+        var aRs = true
+    } else {
+        var aRs = false
     }
     const role = new Role({
-        name : name,
-        addGroups : aGr,
-        addUsers : aUs,
-        addRoles : aRs
+        name: name,
+        addGroups: aGr,
+        addUsers: aUs,
+        addRoles: aRs
     })
     await role.save()
     res.redirect('/')

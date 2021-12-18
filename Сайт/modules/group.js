@@ -30,7 +30,7 @@ const createGroup = ((req, res) => {
 })
 
 const saveGroup = (async (req, res) => {
-    const { name } = req.body
+    const { name,location } = req.body
     const { cookies } = req
     let foundedMails = []
     let users = []
@@ -41,10 +41,17 @@ const saveGroup = (async (req, res) => {
             console.log('user ' + addedMails[i].toString() + ' not found')
         }
         else {
+            var acc
+            if(i==0){
+                acc = true
+            }else{
+                acc = false
+            }
+
             foundedMails.push({
                 name: user.name,
                 mail: user.mail,
-                accepted: false
+                accepted: acc
             })
             users.push({
                 user
@@ -55,11 +62,17 @@ const saveGroup = (async (req, res) => {
     }
     var newGroup = new GroupOfUsers({
         name: name,
-        users: foundedMails
+        users: foundedMails,
+        startLocation : location
     })
     await newGroup.save()
     var id = newGroup._id
     var nameGr = newGroup.name
+    users[0].user.groups.push({
+        id:id,
+        name:nameGr
+    })
+    await users[0].user.save()
     for (var i =1;i<users.length;i++){
         users[i].user.invites.push({
             id:id,
