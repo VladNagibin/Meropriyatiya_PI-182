@@ -58,7 +58,7 @@ router.get('/registration', ((req, res) => {
     })
 }))
 router.post("/acceptInvite",(async (req,res)=>{
-    const {id, name} = req.query
+    const {id} = req.query
     const {cookies} = req
     fGroup = await GroupOfUsers.findById(id);
     for(var i = 0;i<fGroup.users.length;i++){
