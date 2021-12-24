@@ -7,6 +7,7 @@ const Role = require('../models/Role')
 const {jwtSecret} = require('../config/app')
 const logIn = (async (req, res) => {
     const { email, password } = req.body
+    //console.log(req.body)
     User.findOne({ mail : email })
         .exec()
         .then((user => {
@@ -23,7 +24,7 @@ const logIn = (async (req, res) => {
                 res.cookie('UserId',user._id)
                 res.cookie('RoleId', user.roleId)
                 //res.cookie('UserRole',user.roleId,toString())
-                res.redirect('/')
+                res.status(200).json({message:"success"})
                 //res.json({ token })
             }
             else {
@@ -48,8 +49,8 @@ const registration = (async (req, res) => {
     await user.save()
 
     console.log("Пользователь зарегистрирован: " + user.name)
-
-    res.redirect('/')
+    res.status(200).json({message : 'success'})
+    
 
 })
 const out = ((req, res) => {
@@ -58,7 +59,8 @@ const out = ((req, res) => {
     res.clearCookie('UserMail')
     res.clearCookie('addedMails')
     res.clearCookie('RoleId')
-    res.redirect('/EnterInAccount')
+    res.status(200).json({message : 'success'})
+    //res.redirect('/EnterInAccount')
 })
 
 

@@ -38,7 +38,7 @@ router.get('/', enterMiddle, async (req, res) => {
     else {
         username = 'not found'
     }
-    res.render('index', {
+    res.status(200).json({
         title: "main page",
         Username: username,
         OurGroup: GrUsers,
@@ -97,7 +97,7 @@ router.post("/acceptInvite", (async (req, res) => {
     }
 
     await user.save()
-    res.redirect('/')
+    res.status(200).json({message:'success'})
 }))
 router.post("/cancelInvite", (async (req, res) => {
     const { id, name } = req.query
@@ -117,7 +117,7 @@ router.post("/cancelInvite", (async (req, res) => {
     }
     await fgroup.save()
     
-    res.redirect('/')
+    res.status(200).json({message:'success'})
 }))
 
 //группы пользователей
@@ -139,7 +139,7 @@ router.get('/openGroup', enterMiddle, (async (req, res) => {
     const { id } = req.query
     const { cookies } = req
     foundedGroup = await GroupOfUsers.findById(id).lean()
-    res.render('group', {
+    res.status(200).json({
         title: 'Group page',
         OurGroup: foundedGroup.users,
         Username: cookies.UserName,
@@ -159,7 +159,11 @@ router.post('/delete_event_from_group', enterMiddle, (async (req, res) => {
         }
     }
     await foundedGroup.save()
-    res.redirect('/openGroup?id=' + id.toString())
+    res.status(200).json({
+        message:'success',
+        id:id.toString()                        
+    })
+    //res.redirect('/openGroup?id=' + id.toString())
 }))
 router.post('/delete_user_from_group', enterMiddle, (async (req, res) => {
     const { id, mail } = req.body
@@ -170,12 +174,16 @@ router.post('/delete_user_from_group', enterMiddle, (async (req, res) => {
         }
     }
     await foundedGroup.save()
-    res.redirect('/openGroup?id=' + id.toString())
+    res.status(200).json({
+        message:'success',
+        id:id.toString()                        
+    })
+    //res.redirect('/openGroup?id=' + id.toString())
 }))
 router.post('/deleteGroup', enterMiddle, (async (req, res) => {
     const { id } = req.query
     await GroupOfUsers.deleteOne({ _id: id })
-    res.redirect('/')
+    res.status(200).json({message:'success'})
 }))
 
 // роли
@@ -197,20 +205,24 @@ router.post('/openEventAdd', enterMiddle, (async (req, res) => {
 }))
 router.post('/addEvent', enterMiddle, (async (req, res) => {
     const { id, name, date, time, location } = req.body
-    const { cookies } = req
+    //const { cookies } = req
     foundedGroup = await GroupOfUsers.findById(id)
     foundedGroup.events.push({
         location: location,
         name: name,
-        date: date,
-        time: time,
+        date: Date(date),
+        time: Date(time),
     })
     await foundedGroup.save()
     //var idOfGroup = {idOfGroup : id}
     //req.session.group_id = id
     //res.body.idOfGroup=id;
     //res.send(idJson)
-    res.redirect('/openGroup?id=' + id.toString())
+    res.status(200).json({
+        message:'success',
+        id:id.toString()                        
+    })
+   // res.redirect('/openGroup?id=' + id.toString())
 
 
 }))
@@ -219,7 +231,7 @@ router.post('/sendEmail', enterMiddle, (req, res) => {
     const { mail } = req.body
     console.log(mail)
 
-    res.redirect('/')
+    res.status(200).json({message:'success'})
 })
 router.post('/createRole', enterMiddle, (async (req, res) => {
     const { name, addGroup, addUsers, addRoles } = req.body
@@ -245,7 +257,7 @@ router.post('/createRole', enterMiddle, (async (req, res) => {
         addRoles: aRs
     })
     await role.save()
-    res.redirect('/')
+    res.status(200).json({message:'success'})
 }))
 
 /*$(function () {
