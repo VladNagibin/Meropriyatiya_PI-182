@@ -32,11 +32,11 @@ const createGroup = ((req, res) => {
 })
 
 const saveGroup = (async (req, res) => {
-    const { name,location } = req.body
-    const { cookies } = req
+    const { name,location,addedMails } = req.body
+   // const { cookies } = req
     let foundedMails = []
     let users = []
-    addedMails = JSON.parse(cookies.addedMails)
+    //addedMails = JSON.parse(cookies.addedMails)
     for (var i = 0; i < addedMails.length; i++) {
         user = await User.findOne({ mail: addedMails[i] })
         if (!user) {
