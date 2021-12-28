@@ -211,14 +211,13 @@ router.post('/openEventAdd', enterMiddle, (async (req, res) => {
 
 }))
 router.post('/addEvent', enterMiddle, (async (req, res) => {
-    const { id, name, date, time, location } = req.body
+    const { id, name, date_time, location } = req.body
     //const { cookies } = req
     foundedGroup = await GroupOfUsers.findById(id)
     foundedGroup.events.push({
         location: location,
         name: name,
-        date: Date(date),
-        time: Date(time),
+        date_time: Date(date_time),
     })
     await foundedGroup.save()
     //var idOfGroup = {idOfGroup : id}
