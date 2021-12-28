@@ -12,6 +12,7 @@ const logIn = (async (req, res) => {
         .exec()
         .then((user => {
             if (!user) {
+                res.header["Access-Control-Allow-Origin"] = "*"
                 res.status(401).json({ message: 'User does not exist' })
             }
 
@@ -24,10 +25,12 @@ const logIn = (async (req, res) => {
                 res.cookie('UserId',user._id)
                 res.cookie('RoleId', user.roleId)
                 //res.cookie('UserRole',user.roleId,toString())
+                res.header["Access-Control-Allow-Origin"] = "*"
                 res.status(200).json({message:"success"})
                 //res.json({ token })
             }
             else {
+                res.header["Access-Control-Allow-Origin"] = "*"
                 res.status(401).json({ message: 'invalid password' })
             }
 
@@ -49,6 +52,7 @@ const registration = (async (req, res) => {
     await user.save()
 
     console.log("Пользователь зарегистрирован: " + user.name)
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({message : 'success'})
     
 
@@ -59,6 +63,7 @@ const out = ((req, res) => {
     res.clearCookie('UserMail')
     res.clearCookie('addedMails')
     res.clearCookie('RoleId')
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({message : 'success'})
     //res.redirect('/EnterInAccount')
 })

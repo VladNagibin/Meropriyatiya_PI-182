@@ -39,6 +39,7 @@ router.get('/', enterMiddle, async (req, res) => {
     else {
         username = 'not found'
     }
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({
         title: "main page",
         Username: username,
@@ -48,6 +49,7 @@ router.get('/', enterMiddle, async (req, res) => {
         addRoles: addRoles,
         invites: user.invites
     })
+
 
 
 })
@@ -98,6 +100,7 @@ router.post("/acceptInvite", (async (req, res) => {
     }
 
     await user.save()
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({ message: 'success' })
 }))
 router.post("/cancelInvite", (async (req, res) => {
@@ -117,7 +120,7 @@ router.post("/cancelInvite", (async (req, res) => {
         }
     }
     await fgroup.save()
-
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({ message: 'success' })
 }))
 
@@ -140,6 +143,7 @@ router.get('/openGroup', enterMiddle, (async (req, res) => {
     const { id } = req.query
     const { cookies } = req
     foundedGroup = await GroupOfUsers.findById(id).lean()
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({
         title: 'Group page',
         OurGroup: foundedGroup.users,
@@ -160,6 +164,7 @@ router.post('/delete_event_from_group', enterMiddle, (async (req, res) => {
         }
     }
     await foundedGroup.save()
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({
         message: 'success',
         id: id.toString()
@@ -175,6 +180,7 @@ router.post('/delete_user_from_group', enterMiddle, (async (req, res) => {
         }
     }
     await foundedGroup.save()
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({
         message: 'success',
         id: id.toString()
@@ -219,6 +225,7 @@ router.post('/addEvent', enterMiddle, (async (req, res) => {
     //req.session.group_id = id
     //res.body.idOfGroup=id;
     //res.send(idJson)
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({
         message: 'success',
         id: id.toString()
@@ -245,8 +252,10 @@ router.post('/sendEmail', enterMiddle, (req, res) => {
             subject:"Приглашение в группу"
 
         })
+        res.header["Access-Control-Allow-Origin"] = "*"
         res.status(200).json({ message: 'success' })
     } catch(e) {
+        res.header["Access-Control-Allow-Origin"] = "*"
         res.status(201).json({message:'fail'})
     }
 
@@ -280,6 +289,7 @@ router.post('/createRole', enterMiddle, (async (req, res) => {
         addRoles: aRs
     })
     await role.save()
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({ message: 'success' })
 }))
 

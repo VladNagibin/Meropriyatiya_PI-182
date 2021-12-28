@@ -8,6 +8,7 @@ const addInGroup = (req, res) => {
     addedMails = JSON.parse(cookies.addedMails)
     addedMails.push(mail)
     res.cookie('addedMails', JSON.stringify(addedMails))
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({
         title: 'create page',
         Username: cookies.UserName,
@@ -22,6 +23,7 @@ const createGroup = ((req, res) => {
     var addedMails = []
     addedMails.push(cookies.UserMail.toString())
     res.cookie('addedMails', JSON.stringify(addedMails))
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({
         title: 'create page',
         Username: cookies.UserName,
@@ -81,6 +83,7 @@ const saveGroup = (async (req, res) => {
         await users[i].user.save()
     }
     res.clearCookie('addedMails')
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({message:'success'})
 
 })
@@ -88,6 +91,7 @@ const saveGroup = (async (req, res) => {
 const redGroup=((req, res) => {
     const { cookies } = req
     addedMails = JSON.parse(cookies.addedMails)
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({
         title: 'edit page',
         Username: cookies.UserName,
@@ -117,6 +121,7 @@ const saveExistedGroup = (async (req, res) => {
     
     await newGroup.save()
     res.clearCookie('addedMails')
+    res.header["Access-Control-Allow-Origin"] = "*"
     res.status(200).json({message:"success"})
 
 })
