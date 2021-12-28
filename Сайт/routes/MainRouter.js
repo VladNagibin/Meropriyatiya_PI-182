@@ -9,19 +9,20 @@ const enter = require('../modules/enter')
 const enterMiddle = require('../middleware/enter')
 const group = require('../modules/group')
 const session = require('express-session')
+const nodemailer = require('nodemailer')
 var ObjectId = require('mongodb').ObjectId
 
 //{"_id" : {"$in" : [ObjectId("616484529ee3826c60782c1f"), ObjectId("6173e63790f4ba59bcd52459")]}}
 router.get('/', enterMiddle, async (req, res) => {
     const { cookies } = req
     user = await User.findById(cookies.UserId.toString()).lean()
-    let idGr=[]
-    for(var i =0;i<user.groups.length;i++){
+    let idGr = []
+    for (var i = 0; i < user.groups.length; i++) {
         idGr.push(ObjectId(user.groups[i].id))
     }
 
-    GrUsers = await GroupOfUsers.find({"_id" : {"$in" : idGr}}).lean()
-    
+    GrUsers = await GroupOfUsers.find({ "_id": { "$in": idGr } }).lean()
+
     var addGroups = false;
     var addUsers = false;
     var addRoles = false;
@@ -86,8 +87,8 @@ router.post("/acceptInvite", (async (req, res) => {
     await fGroup.save()
     user = await User.findOne({ "mail": cookies.UserMail.toString() })
     user.groups.push({
-        id:id,
-        name:fGroup.name
+        id: id,
+        name: fGroup.name
     })
     //await user.save()
     for (var i = 0; i < user.invites.length; i++) {
@@ -97,7 +98,7 @@ router.post("/acceptInvite", (async (req, res) => {
     }
 
     await user.save()
-    res.status(200).json({message:'success'})
+    res.status(200).json({ message: 'success' })
 }))
 router.post("/cancelInvite", (async (req, res) => {
     const { id, name } = req.query
@@ -116,8 +117,8 @@ router.post("/cancelInvite", (async (req, res) => {
         }
     }
     await fgroup.save()
-    
-    res.status(200).json({message:'success'})
+
+    res.status(200).json({ message: 'success' })
 }))
 
 //группы пользователей
@@ -160,8 +161,8 @@ router.post('/delete_event_from_group', enterMiddle, (async (req, res) => {
     }
     await foundedGroup.save()
     res.status(200).json({
-        message:'success',
-        id:id.toString()                        
+        message: 'success',
+        id: id.toString()
     })
     //res.redirect('/openGroup?id=' + id.toString())
 }))
@@ -175,15 +176,15 @@ router.post('/delete_user_from_group', enterMiddle, (async (req, res) => {
     }
     await foundedGroup.save()
     res.status(200).json({
-        message:'success',
-        id:id.toString()                        
+        message: 'success',
+        id: id.toString()
     })
     //res.redirect('/openGroup?id=' + id.toString())
 }))
 router.post('/deleteGroup', enterMiddle, (async (req, res) => {
     const { id } = req.query
     await GroupOfUsers.deleteOne({ _id: id })
-    res.status(200).json({message:'success'})
+    res.status(200).json({ message: 'success' })
 }))
 
 // роли
@@ -219,19 +220,41 @@ router.post('/addEvent', enterMiddle, (async (req, res) => {
     //res.body.idOfGroup=id;
     //res.send(idJson)
     res.status(200).json({
-        message:'success',
-        id:id.toString()                        
+        message: 'success',
+        id: id.toString()
     })
-   // res.redirect('/openGroup?id=' + id.toString())
+    // res.redirect('/openGroup?id=' + id.toString())
 
 
 }))
 router.post('/sendEmail', enterMiddle, (req, res) => {
     // console.log(req)
-    const { mail } = req.body
-    console.log(mail)
+    const { mail, html } = req.body
+    try {
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: "event.it.invites@gmail.com",
+                pass: "Password567"
+            }
+        })
+        transporter.sendMail({
+            from: '<event.it.invites@gmail.com>',
+            to: mail,
+            html: html,
+            subject:"Приглашение в группу"
 
-    res.status(200).json({message:'success'})
+        })
+        res.status(200).json({ message: 'success' })
+    } catch(e) {
+        res.status(201).json({message:'fail'})
+    }
+
+
+
+    // console.log(mail)
+
+   
 })
 router.post('/createRole', enterMiddle, (async (req, res) => {
     const { name, addGroup, addUsers, addRoles } = req.body
@@ -257,7 +280,7 @@ router.post('/createRole', enterMiddle, (async (req, res) => {
         addRoles: aRs
     })
     await role.save()
-    res.status(200).json({message:'success'})
+    res.status(200).json({ message: 'success' })
 }))
 
 /*$(function () {

@@ -28,6 +28,7 @@
     "express-session": "^1.17.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.6",
+    "nodemailer": "^6.7.2",
     "urllib": "^2.37.4"
   },
   "devDependencies": {
