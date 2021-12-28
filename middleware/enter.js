@@ -10,12 +10,12 @@ module.exports = (req,res,next)=>{
         }
         catch(e){
             if (e instanceof jwt.JsonWebTokenError){
-                res.redirect('/EnterInAccount')
+                res.status(201).json({message:"auth fail"})
             }
         }  
     }
     else{
-        res.redirect('/EnterInAccount')
+        res.status(201).json({message:"auth fail"})
     }
     
     /*const authHeader = req.get('Authorization')

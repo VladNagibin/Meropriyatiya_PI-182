@@ -156,7 +156,7 @@ router.get('/openGroup', enterMiddle, (async (req, res) => {
     })
 }))
 router.post('/delete_event_from_group', enterMiddle, (async (req, res) => {
-    const { id, name } = req.query
+    const { id, name } = req.body
     foundedGroup = await GroupOfUsers.findById(id)
     for (var i = 0; i < foundedGroup.events.length; i++) {
         if (foundedGroup.events[i].name == name) {
